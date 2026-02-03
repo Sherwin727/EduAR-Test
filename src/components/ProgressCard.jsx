@@ -4,55 +4,64 @@ import { useNavigate } from "react-router-dom";
 import modulesConfig from "../config/modulesConfig";
 
 const ProgressCard = () => {
-  const [progress, setProgress] = useState(0);
+  const [modulePercent, setModulePercent] = useState(0);
   const [completedModules, setCompletedModules] = useState(0);
+  const [overallPercent, setOverallPercent] = useState(0);
+
   const navigate = useNavigate();
 
   const totalModules = modulesConfig.length;
 
   useEffect(() => {
+    // ---------- MODULE PROGRESS ----------
     const storedProgress =
       JSON.parse(localStorage.getItem("moduleProgress")) || {};
 
     const values = modulesConfig.map((m) => storedProgress[m.route] ?? 0);
     const totalProgress = values.reduce((sum, val) => sum + val, 0);
-    const averageProgress = totalProgress / totalModules;
+    const averageProgress = values.length ? totalProgress / totalModules : 0;
     const finishedCount = values.filter((val) => val === 100).length;
 
-    setProgress(Math.round(averageProgress));
+    setModulePercent(Math.round(averageProgress));
     setCompletedModules(finishedCount);
+
+    // ---------- OVERALL PROGRESS ----------
+    setOverallPercent(Math.round(averageProgress));
   }, []);
 
   return (
     <div className="bg-base-200 p-5 rounded-2xl shadow-lg">
-      <div className="flex items-center gap-6">
-        <div
-          className="radial-progress text-primary shadow-lg shadow-primary/40"
-          style={{
-            "--value": progress,
-            "--size": "5rem",
-            "--thickness": "6px",
-          }}
-          role="progressbar"
-        >
-          <div className="flex flex-col items-center">
-            <span className="text-xl font-bold">{progress}%</span>
-            <span className="text-xs text-gray-400">Completed</span>
+      {/* HEADER: Overall Progress */}
+      <div className="flex flex-wrap items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div
+            className="radial-progress text-primary shadow-lg shadow-primary/40"
+            style={{
+              "--value": overallPercent,
+              "--size": "5rem",
+              "--thickness": "6px",
+            }}
+            role="progressbar"
+          >
+            <div className="flex flex-col items-center">
+              <span className="text-xl font-bold">{overallPercent}%</span>
+              <span className="text-xs text-gray-400">Overall</span>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <h2 className="text-lg font-bold">Overall Progress</h2>
-          <p className="text-sm text-gray-500">
-            Keep going! You're doing great.
-          </p>
+          <div>
+            <h2 className="text-lg font-bold">Overall Progress</h2>
+            <p className="text-sm text-gray-500">
+              Keep going! You're doing great.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="h-px bg-gradient-to-r from-primary/40 to-transparent my-5"></div>
+      <div className="h-px bg-gradient-to-r from-primary/40 to-transparent my-5" />
 
+      {/* MODULES / ASSESSMENT */}
       <div className="grid grid-cols-2 gap-6 text-center text-sm font-medium">
-
         {/* CLICKABLE MODULES */}
         <div
           className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
@@ -65,8 +74,9 @@ const ProgressCard = () => {
           </span>
         </div>
 
+        {/* Assessment (mirrors modules progress for now) */}
         <div className="flex flex-col items-center hover:scale-105 transition-transform">
-          <CircleCheck className="w-7 h-7 text-primary mb-1" />
+          <CircleCheck className="w-7 h-7 text-secondary mb-1" />
           <span>Assessment</span>
           <span className="text-xs text-gray-500">
             {completedModules} / {totalModules}

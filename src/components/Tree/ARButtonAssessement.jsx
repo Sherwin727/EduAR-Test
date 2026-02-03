@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Lock, Unlock } from "lucide-react";
-import LinkedListAssessmentAR from "./LinkedListAssessmentAR";
+import TreeAssessmentAR from "./TreeAssessmentAR";
 
-const ARButtonAssessment = () => {
+const ARButtonAssessement = () => {
   const [isSupported, setIsSupported] = useState(null);
   const [startAR, setStartAR] = useState(false);
 
@@ -26,7 +26,7 @@ const ARButtonAssessment = () => {
 
   // kung nag-start na si AR → render ARPage1
   if (startAR) {
-    return <LinkedListAssessmentAR />;
+    return <TreeAssessmentAR />;
   }
 
   if (isSupported === null) {
@@ -58,4 +58,4 @@ const ARButtonAssessment = () => {
   );
 };
 
-export default ARButtonAssessment;
+export default ARButtonAssessement;
